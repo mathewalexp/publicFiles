@@ -1,0 +1,8 @@
+ val filename = "path/to/your/file.json"
+  val jsonString = Source.fromFile(filename).getLines().mkString
+
+  // Parse the JSON string
+  val json: JsValue = Json.parse(jsonString)
+
+  // Print the JSON
+  println(Json.prettyPrint(json))
