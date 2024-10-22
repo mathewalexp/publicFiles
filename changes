@@ -1,15 +1,24 @@
-import scala.io.Source
+import com.azure.storage.blob._
+import com.azure.storage.blob.models._
 
-object FileToString extends App {
-  // Specify the path to your file
-  val filename = "path/to/your/file.txt"
+// Create a BlobServiceClient
+val connectionString = "<your-connection-string>"
+val blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionString).buildClient()
 
-  // Read the file contents into a string
-  val fileContents: String = Source.fromFile(filename).getLines().mkString("\n")
+// Specify the container and blob name
+val containerName = "<your-container-name>"
+val blobName = "<your-blob-name>"
 
-  // Print the contents of the file
-  println(fileContents)
-}
+// Get a reference to the container and blob
+val containerClient = blobServiceClient.getBlobContainerClient(containerName)
+val blobClient = containerClient.getBlobClient(blobName)
 
-val input_file = "./scala_input.json"
-val json_content = scala.io.Source.fromFile(input_file).mkString
+// Read the blob content
+val inputStream = blobClient.openQueryInputStream()
+val content = scala.io.Source.fromInputStream(inputStream).getLines().mkString("\n")
+
+// Print the content
+println(content)
+
+// Close the InputStream
+inputStream.close()
