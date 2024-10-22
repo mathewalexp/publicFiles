@@ -10,3 +10,6 @@ object FileToString extends App {
   // Print the contents of the file
   println(fileContents)
 }
+
+val input_file = "./scala_input.json"
+val json_content = scala.io.Source.fromFile(input_file).mkString
