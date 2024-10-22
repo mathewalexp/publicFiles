@@ -1,27 +1,5 @@
-import com.azure.storage.blob._
-import com.azure.storage.blob.models._
-import java.io.ByteArrayOutputStream
-
-object AzureBlobExample {
-  def main(args: Array[String]): Unit = {
-    // Replace with your Azure Blob URL and SAS token
-    val blobUrl = "https://<your_account>.blob.core.windows.net/<your_container>/<your_blob>?<SAS_token>"
-
-    // Create a BlobServiceClient
-    val blobServiceClient = new BlobServiceClientBuilder().endpoint(blobUrl).buildClient()
-    
-    // Extract the container and blob name from the URL
-    val blobContainerClient = blobServiceClient.getBlobContainerClient("<your_container>")
-    val blobClient = blobContainerClient.getBlobClient("<your_blob>")
-
-    // Download the blob content
-    val outputStream = new ByteArrayOutputStream()
-    blobClient.download(outputStream)
-    val fileContent = outputStream.toString("UTF-8")
-
-    // Print the file content
-    println(fileContent)
-
-    outputStream.close()
-  }
-}
+alignedDF.write
+  .format("delta")
+  .option("mergeSchema", "true")
+  .mode("append")
+  .save("path/to/delta/table")
