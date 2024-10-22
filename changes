@@ -1,5 +1,4 @@
-alignedDF.write
-  .format("delta")
-  .option("mergeSchema", "true")
-  .mode("append")
-  .save("path/to/delta/table")
+val emptyDF = df.limit(0)
+
+// Overwrite the original DataFrame with the empty one
+emptyDF.write.format("delta").mode("overwrite").save("path/to/delta/table")
