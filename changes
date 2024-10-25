@@ -1,4 +1,13 @@
-val emptyDF = df.limit(0)
+val jsonString = """
+[
+    {"name": "Alice", "age": 30, "city": "New York"},
+    {"name": "Bob", "age": 25, "city": "San Francisco"},
+    {"name": "Charlie", "age": 35, "city": "Los Angeles"}
+]
+"""
 
-// Overwrite the original DataFrame with the empty one
-emptyDF.write.format("delta").mode("overwrite").save("path/to/delta/table")
+// Convert the JSON string to an RDD
+val jsonRDD = spark.sparkContext.parallelize(Seq(jsonString))
+
+// Read the JSON RDD into a DataFrame
+val df = spark.read.json(jsonRDD)
