@@ -1,29 +1,22 @@
-val xmlString =
-  """
-  <people>
-      <person>
-          <name>Alice</name>
-          <age>30</age>
-          <city>New York</city>
-      </person>
-      <person>
-          <name>Bob</name>
-          <age>25</age>
-          <city>San Francisco</city>
-      </person>
-      <person>
-          <name>Charlie</name>
-          <age>35</age>
-          <city>Los Angeles</city>
-      </person>
-  </people>
-  """
+val csvString =
+  """name,age,city
+    |Alice,30,New York
+    |Bob,25,San Francisco
+    |Charlie,35,Los Angeles""".stripMargin
 
-// Convert the XML string to an RDD
-val xmlRDD = spark.sparkContext.parallelize(Seq(xmlString))
+// Convert the CSV string to an RDD
+val csvRDD = spark.sparkContext.parallelize(csvString.split("\n"))
 
-// Read the XML RDD into a DataFrame
-val df: DataFrame = spark.read
-  .format("xml")
-  .option("rowTag", "person") // Specify the row tag
-  .load(xmlRDD)
+// Use the first line as header
+val header = csvRDD.first()
+
+// Create the DataFrame by using the schema
+val df = spark.createDataFrame(
+  csvRDD.filter(row => row != header).map(_.split(",")) // Split the CSV rows
+    .map(arr => Row(arr(0), arr(1).toInt, arr(2))), // Convert to Row
+  StructType(Seq(
+    StructField("name", StringType, nullable = true),
+    StructField("age", IntegerType, nullable = true),
+    StructField("city", StringType, nullable = true)
+  ))
+)
