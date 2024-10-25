@@ -1,7 +1,29 @@
-val xmlFilePath = "dbfs:/path/to/your/file.xml"
+val xmlString =
+  """
+  <people>
+      <person>
+          <name>Alice</name>
+          <age>30</age>
+          <city>New York</city>
+      </person>
+      <person>
+          <name>Bob</name>
+          <age>25</age>
+          <city>San Francisco</city>
+      </person>
+      <person>
+          <name>Charlie</name>
+          <age>35</age>
+          <city>Los Angeles</city>
+      </person>
+  </people>
+  """
 
-// Read the XML file into a DataFrame
-val df = spark.read
+// Convert the XML string to an RDD
+val xmlRDD = spark.sparkContext.parallelize(Seq(xmlString))
+
+// Read the XML RDD into a DataFrame
+val df: DataFrame = spark.read
   .format("xml")
-  .option("rowTag", "yourRowTag") // Replace 'yourRowTag' with the actual row tag
-  .load(xmlFilePath)
+  .option("rowTag", "person") // Specify the row tag
+  .load(xmlRDD)
