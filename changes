@@ -1,13 +1,7 @@
-val jsonString = """
-[
-    {"name": "Alice", "age": 30, "city": "New York"},
-    {"name": "Bob", "age": 25, "city": "San Francisco"},
-    {"name": "Charlie", "age": 35, "city": "Los Angeles"}
-]
-"""
+val xmlFilePath = "dbfs:/path/to/your/file.xml"
 
-// Convert the JSON string to an RDD
-val jsonRDD = spark.sparkContext.parallelize(Seq(jsonString))
-
-// Read the JSON RDD into a DataFrame
-val df = spark.read.json(jsonRDD)
+// Read the XML file into a DataFrame
+val df = spark.read
+  .format("xml")
+  .option("rowTag", "yourRowTag") // Replace 'yourRowTag' with the actual row tag
+  .load(xmlFilePath)
