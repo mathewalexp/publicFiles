@@ -1,22 +1,72 @@
-val csvString =
-  """name,age,city
-    |Alice,30,New York
-    |Bob,25,San Francisco
-    |Charlie,35,Los Angeles""".stripMargin
+<dependencies>
+    <!-- JWT Library -->
+    <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>3.18.2</version>
+    </dependency>
 
-// Convert the CSV string to an RDD
-val csvRDD = spark.sparkContext.parallelize(csvString.split("\n"))
+    <!-- Optional: Logging Library -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.32</version>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.32</version>
+    </dependency>
+</dependencies>
 
-// Use the first line as header
-val header = csvRDD.first()
 
-// Create the DataFrame by using the schema
-val df = spark.createDataFrame(
-  csvRDD.filter(row => row != header).map(_.split(",")) // Split the CSV rows
-    .map(arr => Row(arr(0), arr(1).toInt, arr(2))), // Convert to Row
-  StructType(Seq(
-    StructField("name", StringType, nullable = true),
-    StructField("age", IntegerType, nullable = true),
-    StructField("city", StringType, nullable = true)
-  ))
-)
+
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
+
+import java.util.Date;
+
+public class AzureTokenValidator {
+
+    // Replace with your Azure AD app's information
+    private static final String ISSUER = "https://login.microsoftonline.com/{tenant-id}/v2.0";
+    private static final String AUDIENCE = "{your-client-id}";
+    private static final String SECRET = "{your-client-secret}"; // Not usually necessary for Azure tokens
+
+    public boolean validateToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(SECRET); // You can use RS256 for public key validation
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .withAudience(AUDIENCE)
+                    .build(); //Reusable verifier instance
+
+            DecodedJWT jwt = verifier.verify(token);
+            
+            // Additional checks
+            if (jwt.getExpiresAt().before(new Date())) {
+                System.out.println("Token has expired");
+                return false;
+            }
+
+            // Token is valid
+            System.out.println("Token is valid");
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("Invalid token: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        AzureTokenValidator validator = new AzureTokenValidator();
+        String token = "{your-jwt-token}";
+        boolean isValid = validator.validateToken(token);
+        System.out.println("Is the token valid? " + isValid);
+    }
+}
