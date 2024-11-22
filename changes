@@ -1,1 +1,47 @@
-mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+public enum Config {
+    APP_NAME("app.name"),
+    APP_VERSION("app.version"),
+    APP_ENVIRONMENT("app.environment");
+
+    private final String key;
+    private static final Properties properties = new Properties();
+
+    // Load properties when the class is loaded
+    static {
+        try (InputStream input = Config.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (input == null) {
+                throw new IOException("Properties file not found");
+            }
+            properties.load(input);
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError("Failed to load properties: " + e.getMessage());
+        }
+    }
+
+    // Constructor to initialize enum keys
+    Config(String key) {
+        this.key = key;
+    }
+
+    // Method to fetch the property value
+    public String getValue() {
+        return properties.getProperty(key);
+    }
+}
+3. Usage
+You can now use the Config enum to fetch properties.
+
+Example:
+java
+Copy code
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("App Name: " + Config.APP_NAME.getValue());
+        System.out.println("App Version: " + Config.APP_VERSION.getValue());
+        System.out.println("App Environment: " + Config.APP_ENVIRONMENT.getValue());
+    }
+}
