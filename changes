@@ -1,47 +1,54 @@
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
-public enum Config {
-    APP_NAME("app.name"),
-    APP_VERSION("app.version"),
-    APP_ENVIRONMENT("app.environment");
+public enum ConfigEnum {
+    INSTANCE; // Singleton instance for the enum
 
-    private final String key;
-    private static final Properties properties = new Properties();
+    private static final Map<String, String> PROPERTIES_MAP = new HashMap<>();
 
-    // Load properties when the class is loaded
+    // Static block to load properties
     static {
-        try (InputStream input = Config.class.getClassLoader().getResourceAsStream("config.properties")) {
+        try (InputStream input = ConfigEnum.class.getClassLoader().getResourceAsStream("config.properties")) {
             if (input == null) {
                 throw new IOException("Properties file not found");
             }
+            Properties properties = new Properties();
             properties.load(input);
+            for (String key : properties.stringPropertyNames()) {
+                PROPERTIES_MAP.put(key, properties.getProperty(key));
+            }
         } catch (IOException e) {
-            throw new ExceptionInInitializerError("Failed to load properties: " + e.getMessage());
+            e.printStackTrace();
+            throw new ExceptionInInitializerError("Failed to load properties file");
         }
     }
 
-    // Constructor to initialize enum keys
-    Config(String key) {
-        this.key = key;
+    // Method to get value by key
+    public String getValue(String key) {
+        return PROPERTIES_MAP.get(key);
     }
 
-    // Method to fetch the property value
-    public String getValue() {
-        return properties.getProperty(key);
+    // Method to retrieve the entire map
+    public Map<String, String> getAllProperties() {
+        return new HashMap<>(PROPERTIES_MAP);
     }
 }
 3. Usage
-You can now use the Config enum to fetch properties.
+You can use this enum to fetch property values like this:
 
-Example:
 java
 Copy code
 public class Main {
     public static void main(String[] args) {
-        System.out.println("App Name: " + Config.APP_NAME.getValue());
-        System.out.println("App Version: " + Config.APP_VERSION.getValue());
-        System.out.println("App Environment: " + Config.APP_ENVIRONMENT.getValue());
+        // Fetch a value by key
+        String value = ConfigEnum.INSTANCE.getValue("KEY1");
+        System.out.println("KEY1 = " + value);
+
+        // Fetch all properties
+        Map<String, String> allProperties = ConfigEnum.INSTANCE.getAllProperties();
+        System.out.println("All properties: " + allProperties);
     }
 }
