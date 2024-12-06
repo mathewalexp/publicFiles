@@ -1,54 +1,9 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+ int count = 1;
+            String newFileName;
+            File newFile;
 
-public enum ConfigEnum {
-    INSTANCE; // Singleton instance for the enum
-
-    private static final Map<String, String> PROPERTIES_MAP = new HashMap<>();
-
-    // Static block to load properties
-    static {
-        try (InputStream input = ConfigEnum.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new IOException("Properties file not found");
-            }
-            Properties properties = new Properties();
-            properties.load(input);
-            for (String key : properties.stringPropertyNames()) {
-                PROPERTIES_MAP.put(key, properties.getProperty(key));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ExceptionInInitializerError("Failed to load properties file");
-        }
-    }
-
-    // Method to get value by key
-    public String getValue(String key) {
-        return PROPERTIES_MAP.get(key);
-    }
-
-    // Method to retrieve the entire map
-    public Map<String, String> getAllProperties() {
-        return new HashMap<>(PROPERTIES_MAP);
-    }
-}
-3. Usage
-You can use this enum to fetch property values like this:
-
-java
-Copy code
-public class Main {
-    public static void main(String[] args) {
-        // Fetch a value by key
-        String value = ConfigEnum.INSTANCE.getValue("KEY1");
-        System.out.println("KEY1 = " + value);
-
-        // Fetch all properties
-        Map<String, String> allProperties = ConfigEnum.INSTANCE.getAllProperties();
-        System.out.println("All properties: " + allProperties);
-    }
-}
+            do {
+                newFileName = originalFileName.replaceFirst("\\.([^.]*)$", "(" + count + ").$1"); // Append (count) before the extension
+                newFile = new File(folderPath, newFileName);
+                count++;
+            } while (newFile.exists());
