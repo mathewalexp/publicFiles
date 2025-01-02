@@ -1,16 +1,22 @@
-var selectedValues = $('input[name="items"]:checked').map(function() {
-      return this.value;
-    }).get();
+// Your XML string
+let xmlString = `
+<externalAttachments>
+  <attachments>
+    <fileName>abcd</fileName>
+  </attachments>
+  <attachments>
+    <fileName>xyz</fileName>
+  </attachments>
+</externalAttachments>
+`;
 
-    // Make an AJAX request with the selected values
-    $.ajax({
-      url: 'your-endpoint-url', // Replace with your server endpoint
-      method: 'POST',
-      data: { selectedItems: selectedValues }, // Send the array as data
-      success: function(response) {
-        console.log('Success:', response); // Handle the success response
-      },
-      error: function(xhr, status, error) {
-        console.log('Error:', error); // Handle any error
-      }
-    });
+// Parse the XML string
+let xmlDoc = $.parseXML(xmlString);
+
+// Use jQuery to work with the parsed XML
+let $xml = $(xmlDoc);
+
+// Traverse through each <fileName> and log its text content
+$xml.find("fileName").each(function() {
+    console.log($(this).text());
+});
