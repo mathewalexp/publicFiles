@@ -1,11 +1,12 @@
-// Your XML string
 let xmlString = `
 <externalAttachments>
   <attachments>
     <fileName>abcd</fileName>
+    <fileSize>1024</fileSize>
   </attachments>
   <attachments>
     <fileName>xyz</fileName>
+    <fileSize>2048</fileSize>
   </attachments>
 </externalAttachments>
 `;
@@ -16,7 +17,9 @@ let xmlDoc = $.parseXML(xmlString);
 // Use jQuery to work with the parsed XML
 let $xml = $(xmlDoc);
 
-// Traverse through each <fileName> and log its text content
-$xml.find("fileName").each(function() {
-    console.log($(this).text());
+// Traverse through each <attachments> and log <fileName> and <fileSize>
+$xml.find("attachments").each(function() {
+    let fileName = $(this).find("fileName").text();
+    let fileSize = $(this).find("fileSize").text();
+    console.log(`FileName: ${fileName}, FileSize: ${fileSize}`);
 });
