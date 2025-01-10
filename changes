@@ -1,12 +1,28 @@
-val spark = SparkSession.builder()
-  .appName("Azure OAuth Example")
-  .config("fs.azure.account.auth.type.<account_name>.dfs.core.windows.net", "OAuth")
-  .config("fs.azure.account.oauth.provider.type.<account_name>.dfs.core.windows.net", "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
-  .config("fs.azure.account.oauth2.client.id.<account_name>.dfs.core.windows.net", "<your-client-id>")
-  .config("fs.azure.account.oauth2.client.secret.<account_name>.dfs.core.windows.net", "<your-client-secret>")
-  .config("fs.azure.account.oauth2.client.endpoint.<account_name>.dfs.core.windows.net", "https://login.microsoftonline.com/<your-tenant-id>/oauth2/token")
+// Import necessary libraries
+import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.Encoders
+
+// Assuming you have a Java class `Alert` with fields `id` and `name`
+// Ensure Spark session is initialized
+val spark: SparkSession = SparkSession.builder()
+  .appName("Convert DataFrame to Java List")
+  .master("local")
   .getOrCreate()
 
+// Sample DataFrame
+import spark.implicits._
+
+val df: DataFrame = Seq(
+  (1, "Alert1"),
+  (2, "Alert2"),
+  (3, "Alert3")
+).toDF("id", "name")
+
+// Import the Java class (you need to have this class defined and accessible)
+import com.yourpackage.Alert
+
+// Define a mapping function
 val alertsDS: Dataset[Alert] = df.map(row => {
   val alert = new Alert()
   alert.setId(row.getAs[Int]("id"))  // Use appropriate types
@@ -14,21 +30,8 @@ val alertsDS: Dataset[Alert] = df.map(row => {
   alert
 })(Encoders.javaSerialization(classOf[Alert]))
 
-
-
-
-
 // Convert to List
 val alertsList: List[Alert] = alertsDS.collect().toList
 
-
-
-import scala.jdk.CollectionConverters._
-
-val scalaList: List[String] = List("one", "two", "three")
-
-// Convert to Java list
-val javaList: java.util.List[String] = scalaList.asJava
-
-// Verify the conversion
-println(javaList) // Output: [one, two, three]
+// Print the list
+alertsList.foreach(alert => println(s"ID: ${alert.getId}, Name: ${alert.getName}"))
