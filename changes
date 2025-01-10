@@ -14,5 +14,21 @@ val alertsDS: Dataset[Alert] = df.map(row => {
   alert
 })(Encoders.javaSerialization(classOf[Alert]))
 
+
+
+
+
 // Convert to List
 val alertsList: List[Alert] = alertsDS.collect().toList
+
+
+
+import scala.jdk.CollectionConverters._
+
+val scalaList: List[String] = List("one", "two", "three")
+
+// Convert to Java list
+val javaList: java.util.List[String] = scalaList.asJava
+
+// Verify the conversion
+println(javaList) // Output: [one, two, three]
