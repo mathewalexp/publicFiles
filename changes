@@ -1,3 +1,12 @@
+val spark = SparkSession.builder()
+  .appName("Azure OAuth Example")
+  .config("fs.azure.account.auth.type.<account_name>.dfs.core.windows.net", "OAuth")
+  .config("fs.azure.account.oauth.provider.type.<account_name>.dfs.core.windows.net", "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
+  .config("fs.azure.account.oauth2.client.id.<account_name>.dfs.core.windows.net", "<your-client-id>")
+  .config("fs.azure.account.oauth2.client.secret.<account_name>.dfs.core.windows.net", "<your-client-secret>")
+  .config("fs.azure.account.oauth2.client.endpoint.<account_name>.dfs.core.windows.net", "https://login.microsoftonline.com/<your-tenant-id>/oauth2/token")
+  .getOrCreate()
+
 val alertsDS: Dataset[Alert] = df.map(row => {
   val alert = new Alert()
   alert.setId(row.getAs[Int]("id"))  // Use appropriate types
