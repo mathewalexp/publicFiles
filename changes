@@ -1,25 +1,9 @@
-let xmlString = `
-<externalAttachments>
-  <attachments>
-    <fileName>abcd</fileName>
-    <fileSize>1024</fileSize>
-  </attachments>
-  <attachments>
-    <fileName>xyz</fileName>
-    <fileSize>2048</fileSize>
-  </attachments>
-</externalAttachments>
-`;
+val alertsDS: Dataset[Alert] = df.map(row => {
+  val alert = new Alert()
+  alert.setId(row.getAs[Int]("id"))  // Use appropriate types
+  alert.setName(row.getAs[String]("name"))
+  alert
+})(Encoders.javaSerialization(classOf[Alert]))
 
-// Parse the XML string
-let xmlDoc = $.parseXML(xmlString);
-
-// Use jQuery to work with the parsed XML
-let $xml = $(xmlDoc);
-
-// Traverse through each <attachments> and log <fileName> and <fileSize>
-$xml.find("attachments").each(function() {
-    let fileName = $(this).find("fileName").text();
-    let fileSize = $(this).find("fileSize").text();
-    console.log(`FileName: ${fileName}, FileSize: ${fileSize}`);
-});
+// Convert to List
+val alertsList: List[Alert] = alertsDS.collect().toList
