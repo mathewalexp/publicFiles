@@ -1,48 +1,11 @@
-import org.apache.spark.sql.SparkSession
+Priyanka is a valuable asset to the team. You are a strong individual contributor who consistently takes complete ownership of any tasks assigned. You exhibits a highly positive attitude and excels as a team player.
 
-object AzureOAuthExample {
-  def main(args: Array[String]): Unit = {
-    // Initialize SparkSession
-    val spark = SparkSession.builder()
-      .appName("Azure OAuth2 Example")
-      .master("local[*]") // Use "local[*]" for local testing, or set to "yarn" for a cluster
-      .getOrCreate()
+Given your overall work experience and significant contributions to this project, the expectation is for you to grow into a leadership role. As discussed, let's develop a plan and set clear objectives for 2025 to take the necessary steps that will support your progression toward achieving this goal.
 
-    // Azure AD credentials
-    val azureAccountName = "<your-account-name>" // Replace with your Azure storage account name
-    val clientId = "<your-client-id>"           // Replace with your Azure AD application (client) ID
-    val clientSecret = "<your-client-secret>"   // Replace with your Azure AD application client secret
-    val tenantId = "<your-tenant-id>"           // Replace with your Azure AD tenant ID
 
-    // Configure OAuth2 for accessing Azure storage
-    spark.conf.set(s"spark.hadoop.fs.azure.account.auth.type.$azureAccountName.dfs.core.windows.net", "OAuth")
-    spark.conf.set(s"spark.hadoop.fs.azure.account.oauth.provider.type.$azureAccountName.dfs.core.windows.net",
-      "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
-    spark.conf.set(s"spark.hadoop.fs.azure.account.oauth2.client.id.$azureAccountName.dfs.core.windows.net", clientId)
-    spark.conf.set(s"spark.hadoop.fs.azure.account.oauth2.client.secret.$azureAccountName.dfs.core.windows.net", clientSecret)
-    spark.conf.set(s"spark.hadoop.fs.azure.account.oauth2.client.endpoint.$azureAccountName.dfs.core.windows.net",
-      s"https://login.microsoftonline.com/$tenantId/oauth2/token")
 
-    // Path to the dataset in Azure
-    val datasetPath = s"abfss://<your-container>@$azureAccountName.dfs.core.windows.net/<path-to-your-dataset>"
 
-    // Read dataset into a DataFrame
-    try {
-      val df = spark.read
-        .option("header", "true") // Set options based on your dataset (e.g., CSV with headers)
-        .csv(datasetPath) // Change this to .parquet(), .json(), etc., based on your dataset format
 
-      // Display the DataFrame
-      df.show()
+Shradha, you are a valuable asset to the team, with remarkable knowledge in the DCP area. Your commitment to the project during critical times reflects a highly positive attitude, and you excel as a team player.
 
-      // Perform additional operations with the DataFrame
-      println(s"Number of rows in the dataset: ${df.count()}")
-    } catch {
-      case e: Exception =>
-        println(s"Failed to read dataset: ${e.getMessage}")
-    }
-
-    // Stop SparkSession
-    spark.stop()
-  }
-}
+Considering your overall experience with the project, the expectation is for you to focus on upskilling, becoming a strong individual contributor, and gradually transitioning into a leadership role. As discussed, you will take ownership of production issues and actively work toward their resolution. Let’s set clear objectives for 2025 to support this growth plan.
