@@ -1,145 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin the Arrow Game</title>
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #ff6a00, #ee0979);
-            color: white;
-            overflow: hidden;
-        }
-        h1 {
-            text-shadow: 2px 2px 4px black;
-        }
-        #participants {
-            width: 80%;
-            padding: 10px;
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .game-area {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            margin: 20px auto;
-        }
-        .arrow {
-            width: 50px;
-            height: 150px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg);
-        }
-        .name {
-            position: absolute;
-            font-size: 18px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px black;
-            transform-origin: center;
-        }
-        #spinBtn {
-            padding: 15px;
-            font-size: 18px;
-            background: yellow;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        #spinBtn:hover {
-            background: lime;
-            transform: scale(1.1);
-        }
-        #winner {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
-            animation: flash 1s infinite alternate;
-        }
-        @keyframes flash {
-            from { color: white; }
-            to { color: yellow; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashy Name Mixer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .input-box {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      margin-bottom: 20px;
+    }
+
+    .mix-btn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .mix-btn:hover {
+      background-color: #45a049;
+    }
+
+    .name-box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+      font-size: 20px;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+
+    .name-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: bounce 1s ease-in-out;
+    }
+
+    .name-group span {
+      margin: 5px;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(-50px);
+      }
+      50% {
+        transform: translateY(20px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Spin the Arrow Game</h1>
-    <input type="text" id="participants" placeholder="Enter names separated by commas">
-    <button id="spinBtn" onclick="setupGame()">Set Names & Spin</button>
-    <div class="game-area" id="gameArea">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Red_Arrow_Down.svg/512px-Red_Arrow_Down.svg.png" 
-             alt="Spinning Arrow" class="arrow" id="arrow">
-    </div>
-    <h2 id="winner"></h2>
+  <div class="container">
+    <input id="namesInput" type="text" class="input-box" placeholder="Enter names, separated by commas">
+    <button class="mix-btn" onclick="mixNames()">Mix Names</button>
 
-    <script>
-        let lastRotation = 0;
-        let names = [];
+    <div id="nameBox" class="name-box"></div>
+  </div>
 
-        function setupGame() {
-            let inputNames = document.getElementById("participants").value.split(",");
-            names = inputNames.map(name => name.trim()).filter(name => name !== "");
-            if (names.length === 0) {
-                alert("Enter at least one name!");
-                return;
-            }
+  <script>
+    function mixNames() {
+      const input = document.getElementById("namesInput").value;
+      const nameArray = input.split(",").map(name => name.trim()).filter(name => name !== "");
 
-            let gameArea = document.getElementById("gameArea");
-            let radius = 140; 
-            let angleStep = 360 / names.length;
+      if (nameArray.length > 0) {
+        shuffleArray(nameArray);
 
-            document.querySelectorAll(".name").forEach(e => e.remove());
+        const nameBox = document.getElementById("nameBox");
+        nameBox.innerHTML = ""; // Clear previous names
 
-            names.forEach((name, index) => {
-                let angle = index * angleStep; 
-                let x = 200 + radius * Math.cos((angle - 90) * (Math.PI / 180));
-                let y = 200 + radius * Math.sin((angle - 90) * (Math.PI / 180));
+        // Group names in sets of 4
+        for (let i = 0; i < nameArray.length; i += 4) {
+          const nameGroup = document.createElement("div");
+          nameGroup.classList.add("name-group");
 
-                let nameElement = document.createElement("div");
-                nameElement.className = "name";
-                nameElement.innerText = name;
-                nameElement.style.left = `${x}px`;
-                nameElement.style.top = `${y}px`;
+          const groupNames = nameArray.slice(i, i + 4);
+          groupNames.forEach(name => {
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = name;
+            nameGroup.appendChild(nameSpan);
+          });
 
-                gameArea.appendChild(nameElement);
-            });
-
-            spinArrow();
+          nameBox.appendChild(nameGroup);
         }
 
-        function spinArrow() {
-            let spinDuration = Math.random() * 2 + 5; // 5-7 sec
-            let randomIndex = Math.floor(Math.random() * names.length);
-            let degreesPerSegment = 360 / names.length;
-            let finalAngle = randomIndex * degreesPerSegment; 
+        // Show animation
+        nameBox.style.opacity = 1;
+      } else {
+        alert("Please enter some names.");
+      }
+    }
 
-            let totalSpins = 10;
-            let randomDegree = totalSpins * 360 + finalAngle;
-
-            let arrow = document.getElementById("arrow");
-
-            // **Reset transition before applying new spin** (Fixes dragging issue)
-            arrow.style.transition = 'none';
-            arrow.style.transform = `translate(-50%, -50%) rotate(${lastRotation}deg)`;
-
-            // **Force reflow to restart animation properly**
-            void arrow.offsetWidth;
-
-            // Apply new transition and rotate
-            arrow.style.transition = `transform ${spinDuration}s ease-out`;
-            arrow.style.transform = `translate(-50%, -50%) rotate(${randomDegree}deg)`;
-
-            lastRotation = randomDegree;
-
-            setTimeout(() => {
-                document.getElementById("winner").innerHTML = `🏆 Winner: <b>${names[randomIndex]}</b>!`;
-            }, spinDuration * 1000);
-        }
-    </script>
+    // Shuffle array function (Fisher-Yates algorithm)
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+      }
+    }
+  </script>
 </body>
 </html>
