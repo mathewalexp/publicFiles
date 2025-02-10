@@ -34,7 +34,6 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(0deg);
-            transition: transform 5s ease-out;
         }
         .name {
             position: absolute;
@@ -91,13 +90,11 @@
             }
 
             let gameArea = document.getElementById("gameArea");
-            let radius = 140; // Distance of names from center
+            let radius = 140; 
             let angleStep = 360 / names.length;
 
-            // Clear previous names
             document.querySelectorAll(".name").forEach(e => e.remove());
 
-            // Position names in a circle
             names.forEach((name, index) => {
                 let angle = index * angleStep; 
                 let x = 200 + radius * Math.cos((angle - 90) * (Math.PI / 180));
@@ -112,20 +109,28 @@
                 gameArea.appendChild(nameElement);
             });
 
-            // Spin the arrow
             spinArrow();
         }
 
         function spinArrow() {
-            let spinDuration = Math.random() * 2 + 5; // Between 5 to 7 seconds
+            let spinDuration = Math.random() * 2 + 5; // 5-7 sec
             let randomIndex = Math.floor(Math.random() * names.length);
             let degreesPerSegment = 360 / names.length;
-            let finalAngle = randomIndex * degreesPerSegment; // The exact angle for the winner
+            let finalAngle = randomIndex * degreesPerSegment; 
 
-            let totalSpins = 10; // Multiple full rotations
+            let totalSpins = 10;
             let randomDegree = totalSpins * 360 + finalAngle;
 
             let arrow = document.getElementById("arrow");
+
+            // **Reset transition before applying new spin** (Fixes dragging issue)
+            arrow.style.transition = 'none';
+            arrow.style.transform = `translate(-50%, -50%) rotate(${lastRotation}deg)`;
+
+            // **Force reflow to restart animation properly**
+            void arrow.offsetWidth;
+
+            // Apply new transition and rotate
             arrow.style.transition = `transform ${spinDuration}s ease-out`;
             arrow.style.transform = `translate(-50%, -50%) rotate(${randomDegree}deg)`;
 
