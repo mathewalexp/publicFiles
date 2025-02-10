@@ -38,7 +38,6 @@
         }
         .name {
             position: absolute;
-            transform-origin: center;
             font-size: 18px;
             font-weight: bold;
             text-shadow: 1px 1px 2px black;
@@ -108,7 +107,6 @@
                 nameElement.innerText = name;
                 nameElement.style.left = `${x}px`;
                 nameElement.style.top = `${y}px`;
-                nameElement.style.transform = `rotate(${angle}deg)`;
 
                 gameArea.appendChild(nameElement);
             });
