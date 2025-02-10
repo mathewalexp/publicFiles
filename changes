@@ -1,4 +1,3 @@
-You truly deserve this, Ayushi. Your hard work and professionalism have paid off. I'm incredibly happy to have someone like you on the team, as you’re one of the key reasons our project consistently excels.
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +33,7 @@ You truly deserve this, Ayushi. Your hard work and professionalism have paid off
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(0deg);
-            transition: transform 3s ease-out;
+            transition: transform 5s ease-out;
         }
         #spinBtn {
             padding: 15px;
@@ -48,6 +47,16 @@ You truly deserve this, Ayushi. Your hard work and professionalism have paid off
         #spinBtn:hover {
             background: lime;
             transform: scale(1.1);
+        }
+        #winner {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            animation: flash 1s infinite alternate;
+        }
+        @keyframes flash {
+            from { color: white; }
+            to { color: yellow; }
         }
     </style>
 </head>
@@ -71,14 +80,16 @@ You truly deserve this, Ayushi. Your hard work and professionalism have paid off
             }
 
             let randomIndex = Math.floor(Math.random() * names.length);
-            let randomDegree = 3600 + (randomIndex * (360 / names.length));
+            let spinDuration = Math.random() * 2 + 5; // Random duration between 5-7 seconds
+            let randomDegree = 3600 + (randomIndex * (360 / names.length)); 
 
             let bottle = document.getElementById("bottle");
+            bottle.style.transition = `transform ${spinDuration}s ease-out`;
             bottle.style.transform = `translate(-50%, -50%) rotate(${randomDegree}deg)`;
 
             setTimeout(() => {
                 document.getElementById("winner").innerHTML = `🏆 Winner: <b>${names[randomIndex]}</b>!`;
-            }, 3000);
+            }, spinDuration * 1000);
         }
     </script>
 </body>
