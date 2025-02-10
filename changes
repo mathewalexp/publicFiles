@@ -1,1 +1,85 @@
 You truly deserve this, Ayushi. Your hard work and professionalism have paid off. I'm incredibly happy to have someone like you on the team, as you’re one of the key reasons our project consistently excels.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin the Bottle Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ff6a00, #ee0979);
+            color: white;
+        }
+        h1 {
+            text-shadow: 2px 2px 4px black;
+        }
+        #participants {
+            width: 80%;
+            padding: 10px;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+        .bottle {
+            width: 100px;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg);
+            transition: transform 3s ease-out;
+        }
+        #spinBtn {
+            padding: 15px;
+            font-size: 18px;
+            background: yellow;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        #spinBtn:hover {
+            background: lime;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Spin the Bottle Game</h1>
+    <input type="text" id="participants" placeholder="Enter names separated by commas">
+    <button id="spinBtn" onclick="spinBottle()">Spin</button>
+    <div class="container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Green_Bottle.jpg/640px-Green_Bottle.jpg" 
+             alt="Spinning Bottle" class="bottle" id="bottle">
+    </div>
+    <h2 id="winner"></h2>
+
+    <script>
+        function spinBottle() {
+            let names = document.getElementById("participants").value.split(",");
+            names = names.map(name => name.trim()).filter(name => name !== "");
+            if (names.length === 0) {
+                alert("Enter at least one name!");
+                return;
+            }
+
+            let randomIndex = Math.floor(Math.random() * names.length);
+            let randomDegree = 3600 + (randomIndex * (360 / names.length));
+
+            let bottle = document.getElementById("bottle");
+            bottle.style.transform = `translate(-50%, -50%) rotate(${randomDegree}deg)`;
+
+            setTimeout(() => {
+                document.getElementById("winner").innerHTML = `🏆 Winner: <b>${names[randomIndex]}</b>!`;
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
