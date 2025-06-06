@@ -1,21 +1,15 @@
-Wanted to give a good shout out to our team. We have ZERO outstanding production issues. Big thanks to all the team members to all involved in the production issue analysis and fixes. The dashboard showing zero production issues is a testament to our hard work and dedication. Keep up the excellent work and continue driving this level of performance!
-
-Special Thanks to Hemanth who took the ownership of all production issues, kept track of it and closed all. 
-
-Please find the gsnow screen shot attached below.
-
-
-
-ChatGPT said:
-That’s a great message! Here's a slightly refined version:
-
-Shoutout to the Team!
-
-We’ve achieved a major milestone – ZERO outstanding production issues! A huge thank you to everyone involved in analyzing and resolving production issues. The dashboard showing zero open issues is a true testament to your hard work and dedication. Keep up the fantastic work and continue to drive this level of excellence!
-
-A special shoutout to Hemanth for taking full ownership of all production issues, diligently tracking them, and ensuring they were all resolved. Your commitment has made a huge impact, Hemanth!
-
-Please find the attached screenshot from GSNow for reference.
-
-Thanks again, everyone, for your incredible efforts!
-
+SELECT 
+    e.employee_id,
+    e.employee_name,
+    MAX(CASE WHEN s.row_num = 1 THEN s.subject END) AS subject1,
+    MAX(CASE WHEN s.row_num = 2 THEN s.subject END) AS subject2,
+    MAX(CASE WHEN s.row_num = 3 THEN s.subject END) AS subject3
+FROM (
+    SELECT 
+        employee_id,
+        subject,
+        ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY subject) AS row_num
+    FROM subjects
+) s
+JOIN employees e ON e.employee_id = s.employee_id
+GROUP BY e.employee_id, e.employee_name;
