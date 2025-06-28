@@ -1,15 +1,27 @@
-SELECT 
-    e.employee_id,
-    e.employee_name,
-    MAX(CASE WHEN s.row_num = 1 THEN s.subject END) AS subject1,
-    MAX(CASE WHEN s.row_num = 2 THEN s.subject END) AS subject2,
-    MAX(CASE WHEN s.row_num = 3 THEN s.subject END) AS subject3
-FROM (
-    SELECT 
-        employee_id,
-        subject,
-        ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY subject) AS row_num
-    FROM subjects
-) s
-JOIN employees e ON e.employee_id = s.employee_id
-GROUP BY e.employee_id, e.employee_name;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+
+public class MSEntraServicePrincipal {
+    public static void main(String[] args) throws Exception{
+        String principalId = "<service_principal_guid>"; // Replace with your Microsoft Entra service principal ID.
+        String principalSecret = "..."; // Replace with your Microsoft Entra principal secret.
+
+        SQLServerDataSource ds = new SQLServerDataSource();
+        ds.setServerName("msentra-managed-demo.database.windows.net"); // Replace with your server name
+        ds.setDatabaseName("demo"); // Replace with your database
+        ds.setAuthentication("ActiveDirectoryServicePrincipal");
+        ds.setUser(principalId); // setAADSecurePrincipalId for JDBC Driver 9.4 and below
+        ds.setPassword(principalSecret); // setAADSecurePrincipalSecret for JDBC Driver 9.4 and below 
+
+        try (Connection connection = ds.getConnection();
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT SUSER_SNAME()")) {
+            if (rs.next()) {
+                System.out.println("You have successfully logged on as: " + rs.getString(1));
+            }
+        }
+    }
+}
